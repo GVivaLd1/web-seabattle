@@ -45,14 +45,24 @@ class Board:
         return True
 
 
-    def receive_shot(self, point: Point):
+    def receive_shot(self, point: Point) -> bool:
         match self.grid[point.x][point.y]:
 
             case CellState.EMPTY:
                 self.grid[point.x][point.y] = CellState.MISS
+                return False
 
             case CellState.SHIP:
                 self.grid[point.x][point.y] = CellState.HIT
+
+                sinked_ship = self.check_anyone_sunk()
+                if sinked_ship != None:
+                    self.__ships.remove(sinked_ship)
+
+                return True
+
+            case _:
+                raise ValueError("Cell already targetet")
 
     # Calls on each shot
     def check_anyone_sunk(self) -> Ship | None:
@@ -68,6 +78,12 @@ class Board:
                 return ship
 
         return None
+
+    def check_is_all_ships_sunk(self) -> bool:
+        if self.__ships == []:
+            return True
+
+        return False
 
     def check_ship_neighbors(self, coordinates: list[Point]) -> bool:
 
