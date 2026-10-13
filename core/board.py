@@ -24,10 +24,7 @@ class Board:
             )
 
             if (
-                target_point.x >= 0 
-                and target_point.x < self.width
-                and target_point.y >= 0 
-                and target_point.y < self.height
+                self.check_borders(target_point)
                 and self.grid[target_point.x][target_point.y] != CellState.SHIP
             ):
                 actual_ship_coordinates.append((target_point))
@@ -103,4 +100,15 @@ class Board:
                     if self.grid[neighbor_x][neighbor_y] == CellState.SHIP:
                         return True
                         
+        return False
+
+    def check_borders(self, point: Point) -> bool:
+        if (
+            point.x >= 0 
+            and point.x < self.width
+            and point.y >= 0 
+            and point.y < self.height
+        ):
+            return True
+
         return False
