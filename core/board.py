@@ -43,6 +43,9 @@ class Board:
 
 
     def receive_shot(self, point: Point) -> bool:
+        if not self.check_borders:
+            return
+        
         match self.grid[point.x][point.y]:
 
             case CellState.EMPTY:
@@ -59,7 +62,7 @@ class Board:
                 return True
 
             case _:
-                raise ValueError("Cell already targetet")
+                raise ValueError("Cell already targeted")
 
     # Calls on each shot
     def check_anyone_sunk(self) -> Ship | None:
