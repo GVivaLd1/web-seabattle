@@ -1,5 +1,5 @@
 from enum import Enum
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 class CellState(Enum):
     EMPTY = 0
@@ -7,7 +7,6 @@ class CellState(Enum):
     HIT = 2
     MISS = 3
 
-@dataclass
-class Point:
+class Point(BaseModel):
     x: int 
     y: int
