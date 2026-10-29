@@ -19,8 +19,8 @@ class Board:
         for point in ship.shape_coordinates:
 
             target_point = Point(
-                start_point.x + point.x,
-                start_point.y + point.y
+                x= start_point.x + point.x,
+                y= start_point.y + point.y
             )
 
             if (
