@@ -43,8 +43,8 @@ class Board:
 
 
     def receive_shot(self, point: Point) -> bool:
-        if not self.check_borders:
-            return
+        if not self.check_borders(point):
+            raise ValueError("The point is not within the game board.")
         
         match self.grid[point.x][point.y]:
 
