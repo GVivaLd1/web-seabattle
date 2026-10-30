@@ -150,3 +150,56 @@ class TestBoardReceiveShot:
         board.receive_shot(Point(x=5, y=5))
 
         assert board.check_is_all_ships_sunk() == True
+
+class TestBoardSinking:
+
+    @pytest.mark.parametrize(
+            "hit_cells, expect_sunk",
+            [
+                # Partial hit
+                (
+                    [Point(x=2, y=2)],
+                    False
+                ),
+
+                # Complete destruction
+                (
+                   (
+                        Point(x=2, y=2),
+                        Point(x=2, y=3)
+                   ),
+                   True
+                )
+            ]
+    )
+    def test_check_anyone_sunk(self, hit_cells, expect_sunk):
+        board = Board(10, 10)
+        coords = [Point(x=0, y=0), Point(x=0, y=1)]
+        destroyer = Ship("destroyer", coords)
+        
+        board.add_ship(Point(x=2, y=2), destroyer)
+        
+        for point in hit_cells:
+            board.grid[point.x][point.y] = CellState.HIT
+        
+        sunk_ship = board.check_anyone_sunk()
+
+        if expect_sunk:
+            assert sunk_ship is destroyer 
+        else:
+            assert sunk_ship is None
+
+    def test_check_is_all_ships_sunk(self):
+        board = Board(10, 10)
+        
+        assert board.check_is_all_ships_sunk() is True
+        
+        coords = [Point(x=0, y=0)]
+        submarine = Ship("submarine", coords)
+        board.add_ship(Point(x=5, y=5), submarine)
+        
+        assert board.check_is_all_ships_sunk() is False
+        
+        board.receive_shot(Point(x=5, y=5))
+        
+        assert board.check_is_all_ships_sunk() is True
