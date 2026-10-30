@@ -19,7 +19,7 @@ class TestBoardAddShip:
                     )
                 ),
 
-                # Wrong ship placement
+                # Wrong ship placement (out of the board )
                 (
                     Point(x=2, y=8),
                     False,
@@ -83,3 +83,70 @@ class TestBoardAddShip:
         
         for x, y, expected_state in expected_cells:
                 assert board.grid[x][y] == expected_state
+
+class TestBoardReceiveShot:
+
+    @pytest.mark.parametrize(
+                "target_point, target_initial_state, target_expected_state, expected_result",
+                [
+                    (
+                        Point(x=3, y=3),
+                        CellState.EMPTY,
+                        CellState.MISS,
+                        False
+                    ),
+                    (
+                        Point(x=3, y=3),
+                        CellState.SHIP,
+                        CellState.HIT,
+                        True
+                    )
+                ]    
+    )
+    def test_hit_changes_state(self, target_point: Point, 
+                               target_initial_state: CellState, 
+                               target_expected_state: CellState, 
+                               expected_result: bool):
+        board: Board = Board(10, 10)
+
+        board.grid[target_point.x][target_point.y] = target_initial_state
+        result: bool = board.receive_shot(target_point)
+
+        assert board.grid[target_point.x][target_point.y] == target_expected_state
+        assert result == expected_result
+
+    def test_shoot_out_of_bound_raises_error(self):
+        board: Board = Board(10, 10)
+        target: Point = Point(x=12, y=-1)
+
+        with pytest.raises(ValueError, match="The point is not within the game board"):
+            board.receive_shot(target)
+
+    @pytest.mark.parametrize(
+            "target_state",
+            [
+                CellState.MISS,
+                CellState.HIT
+            ]
+    )
+    def test_shoot_already_targeted_cell_raises_error(self, target_state):
+        board: Board = Board(10, 10)
+        target: Point = Point(x=3, y=3)
+
+        board.grid[target.x][target.y] = target_state
+
+        with pytest.raises(ValueError, match="Cell already targeted"):
+            board.receive_shot(target)
+    
+    def test_receive_shot_sinks_ship(self):
+        board: Board = Board(10, 10)
+        
+        coords = [Point(x=0, y=0)]
+        submarine = Ship("submarine", coords)
+        board.add_ship(Point(x=5, y=5), submarine)
+        
+        assert board.check_is_all_ships_sunk() == False
+
+        board.receive_shot(Point(x=5, y=5))
+
+        assert board.check_is_all_ships_sunk() == True
