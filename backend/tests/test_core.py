@@ -1,9 +1,9 @@
 import pytest
 from unittest.mock import MagicMock
-from core.models import Point, CellState
-from core.ship import Ship
-from core.board import Board
-from core.game import Game
+from src.core.models import Point, CellState
+from src.core.ship import Ship
+from src.core.board import Board
+from src.core.game import Game
 
 class TestBoardAddShip:
      

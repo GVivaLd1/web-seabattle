@@ -1,5 +1,5 @@
-from core.models import CellState, Point
-from ship import Ship
+from src.core.models import CellState, Point
+from src.core.ship import Ship
 
 class Board:
     def __init__(self, width: int, height: int):

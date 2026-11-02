@@ -1,5 +1,5 @@
-from models import Point
-from board import Board
+from src.core.models import Point
+from src.core.board import Board
 
 class Game:
     def __init__(self, player1_board: Board, player2_board: Board): 
@@ -8,7 +8,7 @@ class Game:
         self.__curr_player_turn = self.__player1_board
 
     # In addition to its primary function, checks whether any of the players have lost.
-    def make_turn(self, player: Board, point: Point):
+    def make_turn(self, player: Board, point: Point) -> bool:
         if self.__curr_player_turn != player:
             return
 
@@ -21,5 +21,5 @@ class Game:
 
         return receiver.check_is_all_ships_sunk()
 
-    def get_opposite_player(self):
+    def get_opposite_player(self) -> Board:
         return self.__player2_board if self.__player1_board == self.__curr_player_turn else self.__player1_board

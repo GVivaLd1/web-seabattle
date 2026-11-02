@@ -1,4 +1,4 @@
-from models import Point
+from src.core.models import Point
 
 class Ship:
     def __init__(self, name: str, shape_coordinates: list[Point]):
