@@ -203,3 +203,49 @@ class TestBoardSinking:
         board.receive_shot(Point(x=5, y=5))
         
         assert board.check_is_all_ships_sunk() is True
+
+class TestBoardCheckNeighbors:
+
+    @pytest.mark.parametrize(
+        "test_coords, expected_has_neighbor",
+        [
+            # No neighbors
+            (
+                [Point(x=1, y=1), Point(x=1, y=2)], 
+                False
+            ),
+            
+            # Diagonal touch
+            (
+                [Point(x=4, y=4)], 
+                True
+            ),
+            
+            # Above ship
+            (
+                [Point(x=5, y=4)], 
+                True
+            ),
+            
+            # From the side
+            (
+                [Point(x=6, y=5), Point(x=7, y=5)], 
+                True
+            ),
+            
+            # Near border (guarantees the absence of an IndexError when searching for neighbors)
+            (
+                [Point(x=0, y=0)], 
+                False
+            )
+        ]
+    )
+    def test_neighbors_detection(self, test_coords, expected_has_neighbor):
+        board = Board(10, 10)
+        
+        obstacle = Ship("submarine", [Point(x=0, y=0)])
+        board.add_ship(Point(x=5, y=5), obstacle)
+        
+        result = board.check_ship_neighbors(test_coords)
+        
+        assert result == expected_has_neighbor
