@@ -1,7 +1,9 @@
 import pytest
+from unittest.mock import MagicMock
+from core.models import Point, CellState
 from core.ship import Ship
 from core.board import Board
-from core.models import Point, CellState
+from core.game import Game
 
 class TestBoardAddShip:
      
@@ -249,3 +251,57 @@ class TestBoardCheckNeighbors:
         result = board.check_ship_neighbors(test_coords)
         
         assert result == expected_has_neighbor
+
+class TestGame:
+    
+    @pytest.fixture
+    def setup_game(self):
+        p1_board = MagicMock()
+        p2_board = MagicMock()
+        game = Game(player1_board=p1_board, player2_board=p2_board)
+        return game, p1_board, p2_board
+
+    def test_initial_turn(self, setup_game):
+        game, p1_board, p2_board = setup_game
+        
+        assert game.get_opposite_player() == p2_board
+
+    def test_make_turn_wrong_player_ignored(self, setup_game):
+        game, p1_board, p2_board = setup_game
+        
+        result = game.make_turn(player=p2_board, point=Point(x=0, y=0))
+        
+        assert result is None
+        p1_board.receive_shot.assert_not_called()
+
+    def test_make_turn_miss_switches_turn(self, setup_game):
+        game, p1_board, p2_board = setup_game
+        
+        p2_board.receive_shot.return_value = False
+        p2_board.check_is_all_ships_sunk.return_value = False
+        
+        result = game.make_turn(player=p1_board, point=Point(x=0, y=0))
+        
+        assert game.get_opposite_player() == p1_board
+        assert result is False
+
+    def test_make_turn_hit_keeps_turn(self, setup_game):
+        game, p1_board, p2_board = setup_game
+        
+        p2_board.receive_shot.return_value = True
+        p2_board.check_is_all_ships_sunk.return_value = False
+        
+        result = game.make_turn(player=p1_board, point=Point(x=0, y=0))
+        
+        assert game.get_opposite_player() == p2_board
+        assert result is False
+
+    def test_make_turn_win_condition(self, setup_game):
+        game, p1_board, p2_board = setup_game
+        
+        p2_board.receive_shot.return_value = True
+        p2_board.check_is_all_ships_sunk.return_value = True
+        
+        result = game.make_turn(player=p1_board, point=Point(x=0, y=0))
+        
+        assert result is True
