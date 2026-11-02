@@ -1,0 +1,7 @@
+.vscode/settings.json
+backend/__pycache__/test_core.cpython-313-pytest-9.1.1.pyc
+backend/src/core/__pycache__/board.cpython-313.pyc
+backend/src/core/__pycache__/game.cpython-313.pyc
+backend/src/core/__pycache__/models.cpython-313.pyc
+backend/src/core/__pycache__/ship.cpython-313.pyc
+backend/tests/__pycache__/test_core.cpython-313-pytest-9.1.1.pyc
